@@ -19,7 +19,7 @@ namespace EquitationAPI.Services
         {
             try
             {
-                _equimarocContext.Users.Add(user);
+                _equimarocContext.User.Add(user);
                 _equimarocContext.SaveChanges();
 
             }
@@ -34,7 +34,7 @@ namespace EquitationAPI.Services
             try
             {
                 User user = GetUser(id);
-                _equimarocContext.Users.Remove(user);
+                _equimarocContext.User.Remove(user);
                 _equimarocContext.SaveChanges();
                 return user;
             }
@@ -49,7 +49,7 @@ namespace EquitationAPI.Services
         {
             try
             {
-                return _equimarocContext.Users.Find((uint)id);
+                return _equimarocContext.User.Find((ushort)id);
             }
             catch (Exception ex)
             {
@@ -61,7 +61,7 @@ namespace EquitationAPI.Services
         {
             try
             {
-                return _equimarocContext.Users.ToList();
+                return _equimarocContext.User.ToList();
             }
             catch (Exception ex)
             {

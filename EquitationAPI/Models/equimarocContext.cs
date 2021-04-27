@@ -17,7 +17,7 @@ namespace EquitationAPI.Models
         public virtual DbSet<Client> Clients { get; set; }
         public virtual DbSet<Seance> Seances { get; set; }
         public virtual DbSet<Task> Tasks { get; set; }
-        public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<User> User { get; set; }
 
     }
 }
