@@ -39,6 +39,7 @@ namespace EquitationAPI
             services.AddScoped<IClientService, ClientService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ITaskService, TaskService>();
+            services.AddScoped<ISeanceService, SeanceService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
