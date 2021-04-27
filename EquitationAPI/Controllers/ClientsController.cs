@@ -31,27 +31,30 @@ namespace EquitationAPI.Controllers
 
         // GET api/<ClientsController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public Client Get(int id)
         {
-            return "value";
+            return _clientSvc.GetClient(id);
         }
 
         // POST api/<ClientsController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public void Post([FromBody] Client client)
         {
+            _clientSvc.AddClient(client);
         }
 
         // PUT api/<ClientsController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut]
+        public void Put(Client client)
         {
+            _clientSvc.UpdateClient(client);
         }
 
         // DELETE api/<ClientsController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public Client Delete(int id)
         {
+            return _clientSvc.DeleteClient(id);
         }
     }
 }
