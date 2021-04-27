@@ -13,6 +13,6 @@ namespace EquitationAPI.Models
         public string Title { get; set; }
         public string Detail { get; set; }
         public DateTime IsDone { get; set; }
-        public ushort UserFk { get; set; }
+        public ushort User_Fk { get; set; }
     }
 }
