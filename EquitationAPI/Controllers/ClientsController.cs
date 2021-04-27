@@ -19,7 +19,6 @@ namespace EquitationAPI.Controllers
         public ClientsController(IClientService clientService)
         {
             _clientSvc = clientService;
-
         }
 
         // GET: api/<ClientsController>
