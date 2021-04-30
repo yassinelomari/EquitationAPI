@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -49,6 +50,8 @@ namespace EquitationAPI.Services
             }
             catch (Exception ex)
             {
+                /*var path = Path.Combine(_hostingEnvironment.WebRootPath, "images", client.Photo);
+                File.Delete(path);*/
                 throw new Exception(ex.Message);
             }
         }

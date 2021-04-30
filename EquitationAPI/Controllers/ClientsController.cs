@@ -1,8 +1,11 @@
 ﻿using EquitationAPI.Models;
 using EquitationAPI.Services;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -14,11 +17,15 @@ namespace EquitationAPI.Controllers
     [ApiController]
     public class ClientsController : ControllerBase
     {
-        public IClientService _clientSvc { get; set; }
+        private IClientService _clientSvc;
+        [Obsolete]
+        private IHostingEnvironment _hostingEnvironment;
 
-        public ClientsController(IClientService clientService)
+        [Obsolete]
+        public ClientsController(IClientService clientService, IHostingEnvironment hostingEnvironment)
         {
             _clientSvc = clientService;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         // GET: api/<ClientsController>
@@ -37,10 +44,20 @@ namespace EquitationAPI.Controllers
 
         // POST api/<ClientsController>
         [HttpPost]
-        public void Post([FromBody] Client client)
+        public void Post([FromForm] Client client, IFormFile image)
         {
+            var fileName = DateTime.Now.ToString("MM_dd_yyyy_HH_mm_ss") + image.FileName;
+            var path = Path.Combine(_hostingEnvironment.WebRootPath, "images", fileName);
+            var stream = new FileStream(path, FileMode.Append);
+            image.CopyTo(stream);
+            client.Photo = fileName;
             _clientSvc.AddClient(client);
         }
+        //[HttpPost]
+        //public void Post([FromBody] Client client)
+        //{
+        //    _clientSvc.AddClient(client);
+        //}
 
         // PUT api/<ClientsController>/5
         [HttpPut]
@@ -54,6 +71,14 @@ namespace EquitationAPI.Controllers
         public Client Delete(int id)
         {
             return _clientSvc.DeleteClient(id);
+        }
+
+        [HttpGet("photo/{name}")]
+        public IActionResult GetImg(string name)
+        {
+            var path = Path.Combine(_hostingEnvironment.WebRootPath, "images", name);
+            var image = System.IO.File.OpenRead(path);
+            return File(image, "image/jpeg");
         }
     }
 }
