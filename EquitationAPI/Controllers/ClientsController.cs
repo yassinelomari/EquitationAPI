@@ -70,7 +70,11 @@ namespace EquitationAPI.Controllers
         [HttpDelete("{id}")]
         public Client Delete(int id)
         {
-            return _clientSvc.DeleteClient(id);
+            Client client = _clientSvc.DeleteClient(id);
+            //string photoName = client.Photo.Replace("jpeg", "jpg");
+            var path = Path.Combine(_hostingEnvironment.WebRootPath, "images", client.Photo);
+            System.IO.File.Delete(path);
+            return client;
         }
 
         [HttpGet("photo/{name}")]
