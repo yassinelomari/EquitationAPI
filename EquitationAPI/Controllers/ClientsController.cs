@@ -1,5 +1,6 @@
 ﻿using EquitationAPI.Models;
 using EquitationAPI.Services;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +14,7 @@ using System.Threading.Tasks;
 
 namespace EquitationAPI.Controllers
 {
+    [EnableCors("MyPolicy")]
     [Route("api/[controller]")]
     [ApiController]
     public class ClientsController : ControllerBase
@@ -43,16 +45,25 @@ namespace EquitationAPI.Controllers
         }
 
         // POST api/<ClientsController>
+        [DisableCors]
         [HttpPost]
-        public void Post([FromForm] Client client, IFormFile image)
+        public void Post([FromBody] Client client)
         {
-            var fileName = DateTime.Now.ToString("MM_dd_yyyy_HH_mm_ss") + image.FileName;
+            string fileName = client.FName + "_" + client.LName + DateTime.Now.ToString("MM_dd_HH_mm_ss") + ".jpg";
             var path = Path.Combine(_hostingEnvironment.WebRootPath, "images", fileName);
-            var stream = new FileStream(path, FileMode.Append);
-            image.CopyTo(stream);
+            System.IO.File.WriteAllBytes(path, Convert.FromBase64String(client.Photo));
             client.Photo = fileName;
             _clientSvc.AddClient(client);
         }
+        //public void Post([FromBody] Client client, IFormFile image)
+        //{
+        //    var fileName = DateTime.Now.ToString("MM_dd_yyyy_HH_mm_ss") + image.FileName;
+        //    var path = Path.Combine(_hostingEnvironment.WebRootPath, "images", fileName);
+        //    var stream = new FileStream(path, FileMode.Append);
+        //    image.CopyTo(stream);
+        //    client.Photo = fileName;
+        //    _clientSvc.AddClient(client);
+        //}
         //[HttpPost]
         //public void Post([FromBody] Client client)
         //{
