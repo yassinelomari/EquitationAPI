@@ -47,13 +47,15 @@ namespace EquitationAPI.Controllers
         // POST api/<ClientsController>
         [DisableCors]
         [HttpPost]
-        public void Post([FromBody] Client client)
+        public IActionResult Post([FromBody] Client client)
         {
             string fileName = client.FName + "_" + client.LName + DateTime.Now.ToString("MM_dd_HH_mm_ss") + ".jpg";
             var path = Path.Combine(_hostingEnvironment.WebRootPath, "images", fileName);
             System.IO.File.WriteAllBytes(path, Convert.FromBase64String(client.Photo));
             client.Photo = fileName;
             _clientSvc.AddClient(client);
+            string status = "SUCCESS";
+            return Content("{ \"status\":\"SUCCESS\" }", "application/json");
         }
         //public void Post([FromBody] Client client, IFormFile image)
         //{
@@ -72,9 +74,10 @@ namespace EquitationAPI.Controllers
 
         // PUT api/<ClientsController>/5
         [HttpPut]
-        public void Put(Client client)
+        public IActionResult Put(Client client)
         {
             _clientSvc.UpdateClient(client);
+            return Content("{ \"status\":\"SUCCESS\" }", "application/json");
         }
 
         // DELETE api/<ClientsController>/5
@@ -94,6 +97,20 @@ namespace EquitationAPI.Controllers
             var path = Path.Combine(_hostingEnvironment.WebRootPath, "images", name);
             var image = System.IO.File.OpenRead(path);
             return File(image, "image/jpeg");
+        }
+
+        [DisableCors]
+        [HttpPut("photo/")]
+        public IActionResult ChangeImg([FromBody] Image image)
+        {
+            Client client = _clientSvc.GetClient(image.UserId);
+            string fileName = client.FName + "_" + client.LName + DateTime.Now.ToString("MM_dd_HH_mm_ss") + ".jpg";
+            var path = Path.Combine(_hostingEnvironment.WebRootPath, "images", fileName);
+            System.IO.File.WriteAllBytes(path, Convert.FromBase64String(image.ImageBase64));
+            client.Photo = fileName;
+            _clientSvc.UpdateClient(client);
+            string status = "SUCCESS";
+            return Content("{ \"status\":\"SUCCESS\" }", "application/json");
         }
     }
 }
