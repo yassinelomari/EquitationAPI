@@ -1,5 +1,6 @@
 ﻿using EquitationAPI.Models;
 using EquitationAPI.Services;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace EquitationAPI.Controllers
 {
+    [EnableCors("MyPolicy")]
     [Route("api/[controller]")]
     [ApiController]
     public class SeancesController : ControllerBase
@@ -36,17 +38,23 @@ namespace EquitationAPI.Controllers
         }
 
         // POST api/<SeancesController>
+        [DisableCors]
         [HttpPost]
-        public void Post([FromBody] Seance seance)
+        public IActionResult Post([FromBody] Seance seance)
         {
             _SeanceService.AddSeance(seance);
+            string status = "SUCCESS";
+            return Content("{ \"status\":\"SUCCESS\" }", "application/json");
         }
 
         // PUT api/<SeancesController>/5
+        [DisableCors]
         [HttpPut]
-        public void Put([FromBody] Seance seance)
+        public IActionResult Put([FromBody] Seance seance)
         {
             _SeanceService.UpdateSeance(seance);
+            string status = "SUCCESS";
+            return Content("{ \"status\":\"SUCCESS\" }", "application/json");
         }
 
         // DELETE api/<SeancesController>/5
@@ -54,6 +62,19 @@ namespace EquitationAPI.Controllers
         public Seance Delete(int id)
         {
             return _SeanceService.DeleteSeance(id);
+        }
+
+        [HttpGet("groups/")]
+        public IEnumerable<Group> GetGroups()
+        {
+            return _SeanceService.GetDistinctGrp();
+        }
+
+        [HttpGet("groupIdMax/")]
+        public IActionResult GetGroupIdMax()
+        {
+            int maxId = _SeanceService.GetMaxGrp();
+            return Content("{ \"id\":\""+ maxId + "\" }", "application/json");
         }
     }
 }

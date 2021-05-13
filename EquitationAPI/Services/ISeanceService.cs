@@ -13,5 +13,7 @@ namespace EquitationAPI.Services
         void AddSeance(Seance seance);
         Seance DeleteSeance(int id);
         void UpdateSeance(Seance seance);
+        IEnumerable<Group> GetDistinctGrp();
+        int GetMaxGrp();
     }
 }

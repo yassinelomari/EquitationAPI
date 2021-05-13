@@ -82,5 +82,24 @@ namespace EquitationAPI.Services
                 throw new Exception(ex.Message);
             }
         }
+
+        public IEnumerable<Group> GetDistinctGrp()
+        {
+            //return _equimarocContext.Seances.Select(m => m.SeanceGrpId).Distinct();
+            return _equimarocContext.Seances
+                .Join(
+                    _equimarocContext.User,
+                    entryPoint => entryPoint.MonitorId,
+                    entry => entry.UserId,
+                    (entryPoint, entry) => new { entryPoint, entry }
+                ).GroupBy(g => g.entryPoint.SeanceGrpId)
+                .Select(m => new Group(m.Key, m.Max(row => row.entryPoint.StartDate),
+                    m.Max(r => r.entry.UserFname + " " + r.entry.UserLname + "|" + r.entry.UserId)));
+        }
+
+        public int GetMaxGrp()
+        {
+            return (int)_equimarocContext.Seances.Select(m => m.SeanceGrpId).Max();
+        }
     }
 }

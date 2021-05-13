@@ -25,6 +25,15 @@ namespace EquitationAPI.Models
             modelBuilder.Entity<Client>()
                 .Property(c => c.ClientId)
                 .ValueGeneratedOnAdd();
+            modelBuilder.Entity<Seance>()
+                .Property(s => s.SeanceId)
+                .ValueGeneratedOnAdd();
+            modelBuilder.Entity<User>()
+                .Property(u => u.UserId)
+                .ValueGeneratedOnAdd();
+            modelBuilder.Entity<Task>()
+                .Property(t => t.TaskId)
+                .ValueGeneratedOnAdd();
         }
 
     }
