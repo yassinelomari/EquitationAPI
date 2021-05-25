@@ -1,8 +1,11 @@
 ﻿using EquitationAPI.Models;
 using EquitationAPI.Services;
+using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -15,10 +18,13 @@ namespace EquitationAPI.Controllers
     public class UsersController : ControllerBase
     {
         public IUserService _userService { get; set; }
+        [Obsolete]
+        private IHostingEnvironment _hostingEnvironment;
 
-        public UsersController(IUserService userService)
+        public UsersController(IUserService userService, IHostingEnvironment hostingEnvironment)
         {
             _userService = userService;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         // GET: api/<UsersController>
@@ -37,23 +43,66 @@ namespace EquitationAPI.Controllers
 
         // POST api/<UsersController>
         [HttpPost]
-        public void Post([FromBody] User user)
+        public IActionResult Post([FromBody] User user)
         {
+            string fileName = user.UserFname + "_" + user.UserLname + DateTime.Now.ToString("MM_dd_HH_mm_ss") + ".jpg";
+            var path = Path.Combine(_hostingEnvironment.WebRootPath, "images", fileName);
+            System.IO.File.WriteAllBytes(path, Convert.FromBase64String(user.Userphoto));
+            user.Userphoto = fileName;
             _userService.AddUser(user);
+            return Content("{ \"status\":\"SUCCESS\", \"photo\":\""+ fileName + "\"}", "application/json");
         }
 
         // PUT api/<UsersController>/5
         [HttpPut]
-        public void Put([FromBody] User user)
+        public IActionResult Put([FromBody] User user)
         {
             _userService.UpdateUser(user);
+            return Content("{ \"status\":\"SUCCESS\" }", "application/json");
         }
 
         // DELETE api/<UsersController>/5
         [HttpDelete("{id}")]
         public User Delete(int id)
         {
-            return _userService.DeleteUser(id);
+            User user = _userService.DeleteUser(id);
+            var path = Path.Combine(_hostingEnvironment.WebRootPath, "images", user.Userphoto);
+            System.IO.File.Delete(path);
+            return user;
+        }
+
+        [HttpGet("disable/{id}")]
+        public IActionResult Disable(int id)
+        {
+            User user = _userService.GetUser(id);
+            user.IsActive = false;
+            _userService.UpdateUser(user);
+            return Content("{ \"status\":\"SUCCESS\" }", "application/json");
+        }
+
+        [DisableCors]
+        [HttpPut("photo/")]
+        public IActionResult ChangeImg([FromBody] Image image)
+        {
+            User user = _userService.GetUser(image.UserId);
+            string fileName = user.UserFname + "_" + user.UserLname + DateTime.Now.ToString("MM_dd_HH_mm_ss") + ".jpg";
+            var path = Path.Combine(_hostingEnvironment.WebRootPath, "images", fileName);
+            System.IO.File.WriteAllBytes(path, Convert.FromBase64String(image.ImageBase64));
+            string OldPhoto = user.Userphoto;
+            user.Userphoto = fileName;
+            _userService.UpdateUser(user);
+            var path1 = Path.Combine(_hostingEnvironment.WebRootPath, "images", OldPhoto);
+            System.IO.File.Delete(path1);
+            return Content("{ \"status\":\"SUCCESS\" }", "application/json");
+        }
+
+        [HttpGet("enable/{id}")]
+        public IActionResult Enable(int id)
+        {
+            User user = _userService.GetUser(id);
+            user.IsActive = true;
+            _userService.UpdateUser(user);
+            return Content("{ \"status\":\"SUCCESS\" }", "application/json");
         }
     }
 }

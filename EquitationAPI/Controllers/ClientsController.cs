@@ -107,9 +107,29 @@ namespace EquitationAPI.Controllers
             string fileName = client.FName + "_" + client.LName + DateTime.Now.ToString("MM_dd_HH_mm_ss") + ".jpg";
             var path = Path.Combine(_hostingEnvironment.WebRootPath, "images", fileName);
             System.IO.File.WriteAllBytes(path, Convert.FromBase64String(image.ImageBase64));
+            string OldPhoto = client.Photo;
             client.Photo = fileName;
             _clientSvc.UpdateClient(client);
-            string status = "SUCCESS";
+            var path1 = Path.Combine(_hostingEnvironment.WebRootPath, "images", OldPhoto);
+            System.IO.File.Delete(path1);
+            return Content("{ \"status\":\"SUCCESS\" }", "application/json");
+        }
+
+        [HttpGet("disable/{id}")]
+        public IActionResult Disable(int id)
+        {
+            Client client = _clientSvc.GetClient(id);
+            client.IsActive = false;
+            _clientSvc.UpdateClient(client);
+            return Content("{ \"status\":\"SUCCESS\" }", "application/json");
+        }
+
+        [HttpGet("enable/{id}")]
+        public IActionResult Enable(int id)
+        {
+            Client client = _clientSvc.GetClient(id);
+            client.IsActive = true;
+            _clientSvc.UpdateClient(client);
             return Content("{ \"status\":\"SUCCESS\" }", "application/json");
         }
     }
