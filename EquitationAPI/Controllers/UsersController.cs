@@ -66,8 +66,12 @@ namespace EquitationAPI.Controllers
         public User Delete(int id)
         {
             User user = _userService.DeleteUser(id);
-            var path = Path.Combine(_hostingEnvironment.WebRootPath, "images", user.Userphoto);
-            System.IO.File.Delete(path);
+            if(user.Userphoto != "default.jpg")
+            {
+                var path = Path.Combine(_hostingEnvironment.WebRootPath, "images", user.Userphoto);
+                System.IO.File.Delete(path);
+            }
+            
             return user;
         }
 
@@ -91,8 +95,11 @@ namespace EquitationAPI.Controllers
             string OldPhoto = user.Userphoto;
             user.Userphoto = fileName;
             _userService.UpdateUser(user);
-            var path1 = Path.Combine(_hostingEnvironment.WebRootPath, "images", OldPhoto);
-            System.IO.File.Delete(path1);
+            if (user.Userphoto != "default.jpg")
+            {
+                var path1 = Path.Combine(_hostingEnvironment.WebRootPath, "images", OldPhoto);
+                System.IO.File.Delete(path1);
+            }
             return Content("{ \"status\":\"SUCCESS\" }", "application/json");
         }
 

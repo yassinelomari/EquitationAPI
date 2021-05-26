@@ -86,8 +86,11 @@ namespace EquitationAPI.Controllers
         {
             Client client = _clientSvc.DeleteClient(id);
             //string photoName = client.Photo.Replace("jpeg", "jpg");
-            var path = Path.Combine(_hostingEnvironment.WebRootPath, "images", client.Photo);
-            System.IO.File.Delete(path);
+            if (client.Photo != "default.jpg")
+            {
+                var path = Path.Combine(_hostingEnvironment.WebRootPath, "images", client.Photo);
+                System.IO.File.Delete(path);
+            }
             return client;
         }
 
@@ -110,8 +113,11 @@ namespace EquitationAPI.Controllers
             string OldPhoto = client.Photo;
             client.Photo = fileName;
             _clientSvc.UpdateClient(client);
-            var path1 = Path.Combine(_hostingEnvironment.WebRootPath, "images", OldPhoto);
-            System.IO.File.Delete(path1);
+            if (client.Photo != "default.jpg")
+            {
+                var path1 = Path.Combine(_hostingEnvironment.WebRootPath, "images", OldPhoto);
+                System.IO.File.Delete(path1);
+            }
             return Content("{ \"status\":\"SUCCESS\" }", "application/json");
         }
 
