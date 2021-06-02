@@ -101,5 +101,12 @@ namespace EquitationAPI.Services
         {
             return (int)_equimarocContext.Seances.Select(m => m.SeanceGrpId).Max();
         }
+
+        public IEnumerable<Seance> GetSeanceByClientAndMonth(uint idClient, int month, int year)
+        {
+            return _equimarocContext.Seances
+                .Where(s => s.StartDate.Month == month && s.ClientId == idClient && s.StartDate.Year == year)
+                .ToList();
+        }
     }
 }

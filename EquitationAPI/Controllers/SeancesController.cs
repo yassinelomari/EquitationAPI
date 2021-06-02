@@ -76,5 +76,11 @@ namespace EquitationAPI.Controllers
             int maxId = _SeanceService.GetMaxGrp();
             return Content("{ \"id\":\""+ maxId + "\" }", "application/json");
         }
+
+        [HttpGet("{idClient}/{month}/{year}")]
+        public IEnumerable<Seance> Get(int idClient, int month, int year)
+        {
+            return _SeanceService.GetSeanceByClientAndMonth((uint)idClient, month, year);
+        }
     }
 }

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using BC = BCrypt.Net.BCrypt;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -18,12 +19,16 @@ namespace EquitationAPI.Controllers
     public class UsersController : ControllerBase
     {
         public IUserService _userService { get; set; }
+
+        public IClientService _clientService { get; set; }
         [Obsolete]
         private IHostingEnvironment _hostingEnvironment;
 
-        public UsersController(IUserService userService, IHostingEnvironment hostingEnvironment)
+        public UsersController(IUserService userService, IHostingEnvironment hostingEnvironment,
+                            IClientService clientService)
         {
             _userService = userService;
+            _clientService = clientService;
             _hostingEnvironment = hostingEnvironment;
         }
 
@@ -48,6 +53,7 @@ namespace EquitationAPI.Controllers
             string fileName = user.UserFname + "_" + user.UserLname + DateTime.Now.ToString("MM_dd_HH_mm_ss") + ".jpg";
             var path = Path.Combine(_hostingEnvironment.WebRootPath, "images", fileName);
             System.IO.File.WriteAllBytes(path, Convert.FromBase64String(user.Userphoto));
+            user.UserPasswd = BC.HashPassword(user.UserPasswd);
             user.Userphoto = fileName;
             _userService.AddUser(user);
             return Content("{ \"status\":\"SUCCESS\", \"photo\":\""+ fileName + "\"}", "application/json");
@@ -110,6 +116,30 @@ namespace EquitationAPI.Controllers
             user.IsActive = true;
             _userService.UpdateUser(user);
             return Content("{ \"status\":\"SUCCESS\" }", "application/json");
+        }
+
+        [HttpGet("login/{login}/{pwd}")]
+        public IActionResult Login(string login, string pwd)
+        {
+            Client client = _clientService.LoginVerification(login);
+            if (client == null || !BC.Verify(pwd, client.Passwd))
+            {
+                User user = _userService.LoginVerification(login);
+                if (user == null || !BC.Verify(pwd, user.UserPasswd))
+                {
+                    // authentication failed
+                    return Content("{ \"status\":\"FAIL\" }", "application/json");
+                }
+                else
+                {
+                    return Content("{ \"status\":\"SUCCESS\", \"role\":\""+ user.UserType +"\", \"id\":" + user.UserId + " }", "application/json");
+                }
+            } 
+            else
+            {
+                // authentication successful
+                return Content("{ \"status\":\"SUCCESS\", \"role\":\"CLIENT\", \"id\":" + client.ClientId + " }", "application/json");
+            }
         }
     }
 }

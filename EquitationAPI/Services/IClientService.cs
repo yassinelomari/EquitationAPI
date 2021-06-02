@@ -14,5 +14,7 @@ namespace EquitationAPI.Services
 
         Client DeleteClient(int id);
         void UpdateClient(Client client);
+
+        Client LoginVerification(string login);
     }
 }

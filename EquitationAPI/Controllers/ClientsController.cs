@@ -1,5 +1,6 @@
 ﻿using EquitationAPI.Models;
 using EquitationAPI.Services;
+using ImageMagick;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -9,6 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using BC = BCrypt.Net.BCrypt;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -52,6 +54,7 @@ namespace EquitationAPI.Controllers
             string fileName = client.FName + "_" + client.LName + DateTime.Now.ToString("MM_dd_HH_mm_ss") + ".jpg";
             var path = Path.Combine(_hostingEnvironment.WebRootPath, "images", fileName);
             System.IO.File.WriteAllBytes(path, Convert.FromBase64String(client.Photo));
+            client.Passwd = BC.HashPassword(client.Passwd);
             client.Photo = fileName;
             _clientSvc.AddClient(client);
             string status = "SUCCESS";
@@ -102,6 +105,17 @@ namespace EquitationAPI.Controllers
             return File(image, "image/jpeg");
         }
 
+        [HttpGet("photoById/{id}")]
+        public IActionResult GetImgById(int id)
+        {
+            Client client = _clientSvc.GetClient(id);
+            var path = Path.Combine(_hostingEnvironment.WebRootPath, "images", client.Photo);
+            var image = new FileInfo(path);
+            var optimizer = new ImageOptimizer();
+            optimizer.Compress(image);
+            return File(image.OpenRead(), "image/jpeg");
+        }
+
         [DisableCors]
         [HttpPut("photo/")]
         public IActionResult ChangeImg([FromBody] Image image)
@@ -138,5 +152,8 @@ namespace EquitationAPI.Controllers
             _clientSvc.UpdateClient(client);
             return Content("{ \"status\":\"SUCCESS\" }", "application/json");
         }
+
+
+
     }
 }

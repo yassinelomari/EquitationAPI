@@ -85,5 +85,11 @@ namespace EquitationAPI.Services
                 throw new Exception(ex.Message);
             }
         }
+
+        public Client LoginVerification(string login)
+        {
+            return _equimarocContext.Clients
+                .SingleOrDefault(c => c.ClientEmail == login);
+        }
     }
 }

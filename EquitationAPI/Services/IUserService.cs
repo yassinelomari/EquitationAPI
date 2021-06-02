@@ -14,5 +14,7 @@ namespace EquitationAPI.Services
 
         User DeleteUser(int id);
         void UpdateUser(User user);
+
+        User LoginVerification(string login);
     }
 }
