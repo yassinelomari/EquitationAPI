@@ -82,5 +82,18 @@ namespace EquitationAPI.Controllers
         {
             return _SeanceService.GetSeanceByClientAndMonth((uint)idClient, month, year);
         }
+
+        [HttpGet("monitor/{idMonitor}/{month}/{year}")]
+        public IEnumerable<Seance> GetForMonitor(int idMonitor, int month, int year)
+        {
+            return _SeanceService.GetSeanceByMonitorAndMonth((uint)idMonitor, month, year);
+        }
+
+        [HttpGet("{idMonitor}/{day}")]
+        public IEnumerable<Seance> Get(int idMonitor, string day)
+        {
+            DateTime day2 = DateTime.Parse(day, null, System.Globalization.DateTimeStyles.RoundtripKind);
+            return _SeanceService.GetSeanceByMonitorAndDay((uint)idMonitor, day2);
+        }
     }
 }

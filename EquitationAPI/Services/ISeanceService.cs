@@ -17,5 +17,9 @@ namespace EquitationAPI.Services
         int GetMaxGrp();
 
         IEnumerable<Seance> GetSeanceByClientAndMonth(uint idClient, int month, int year);
+
+        IEnumerable<Seance> GetSeanceByMonitorAndMonth(uint idMonitor, int month, int year);
+
+        IEnumerable<Seance> GetSeanceByMonitorAndDay(uint idMonitor, DateTime day);
     }
 }

@@ -13,5 +13,7 @@ namespace EquitationAPI.Services
         void AddTask(Models.Task task);
         Models.Task DeleteTask(int id);
         void UpdateTask(Models.Task task);
+        IEnumerable<Models.Task> GetTaskByClientAndMonth(uint idUser, int month, int year);
+        IEnumerable<Models.Task> GetTaskByUserAndDay(uint idUser, DateTime day);
     }
 }

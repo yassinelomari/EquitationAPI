@@ -53,5 +53,18 @@ namespace EquitationAPI.Controllers
         {
             return _TaskService.DeleteTask(id);
         }
+
+        [HttpGet("{idUser}/{month}/{year}")]
+        public IEnumerable<Models.Task> Get(int idUser, int month, int year)
+        {
+            return _TaskService.GetTaskByClientAndMonth((uint)idUser, month, year);
+        }
+
+        [HttpGet("{idUser}/{day}")]
+        public IEnumerable<Models.Task> Get(int idUser, string day)
+        {
+            DateTime day2 = DateTime.Parse(day, null, System.Globalization.DateTimeStyles.RoundtripKind);
+            return _TaskService.GetTaskByUserAndDay((uint)idUser, day2);
+        }
     }
 }

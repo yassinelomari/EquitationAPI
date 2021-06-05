@@ -108,5 +108,20 @@ namespace EquitationAPI.Services
                 .Where(s => s.StartDate.Month == month && s.ClientId == idClient && s.StartDate.Year == year)
                 .ToList();
         }
+
+        public IEnumerable<Seance> GetSeanceByMonitorAndMonth(uint idMonitor, int month, int year)
+        {
+            return _equimarocContext.Seances
+                .Where(s => s.StartDate.Month == month && s.MonitorId == idMonitor && s.StartDate.Year == year)
+                .ToList();
+        }
+
+        public IEnumerable<Seance> GetSeanceByMonitorAndDay(uint idMonitor, DateTime day)
+        {
+            return _equimarocContext.Seances
+                .Where(s => s.StartDate.Month == day.Month && s.MonitorId == idMonitor 
+                    && s.StartDate.Year == day.Year && s.StartDate.Day == day.Day)
+                .ToList();
+        }
     }
 }

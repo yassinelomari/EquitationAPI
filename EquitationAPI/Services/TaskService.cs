@@ -84,5 +84,20 @@ namespace EquitationAPI.Services
                 throw new Exception(ex.Message);
             }
         }
+
+        public IEnumerable<Task> GetTaskByClientAndMonth(uint idUser, int month, int year)
+        {
+            return _equimarocContext.Tasks
+                .Where(t => t.StartDate.Month == month && t.User_Fk == idUser && t.StartDate.Year == year)
+                .ToList();
+        }
+
+        public IEnumerable<Task> GetTaskByUserAndDay(uint idUser, DateTime day)
+        {
+            return _equimarocContext.Tasks
+                .Where(t => t.StartDate.Month == day.Month && t.User_Fk == idUser && t.StartDate.Year == day.Year 
+                && t.StartDate.Day == day.Day)
+                .ToList();
+        }
     }
 }

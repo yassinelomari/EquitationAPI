@@ -60,20 +60,6 @@ namespace EquitationAPI.Controllers
             string status = "SUCCESS";
             return Content("{ \"status\":\"SUCCESS\" }", "application/json");
         }
-        //public void Post([FromBody] Client client, IFormFile image)
-        //{
-        //    var fileName = DateTime.Now.ToString("MM_dd_yyyy_HH_mm_ss") + image.FileName;
-        //    var path = Path.Combine(_hostingEnvironment.WebRootPath, "images", fileName);
-        //    var stream = new FileStream(path, FileMode.Append);
-        //    image.CopyTo(stream);
-        //    client.Photo = fileName;
-        //    _clientSvc.AddClient(client);
-        //}
-        //[HttpPost]
-        //public void Post([FromBody] Client client)
-        //{
-        //    _clientSvc.AddClient(client);
-        //}
 
         // PUT api/<ClientsController>/5
         [HttpPut]
@@ -149,6 +135,15 @@ namespace EquitationAPI.Controllers
         {
             Client client = _clientSvc.GetClient(id);
             client.IsActive = true;
+            _clientSvc.UpdateClient(client);
+            return Content("{ \"status\":\"SUCCESS\" }", "application/json");
+        }
+
+        [HttpGet("rating/{id}/{rate}")]
+        public IActionResult rating(int id, string rate)
+        {
+            Client client = _clientSvc.GetClient(id);
+            client.Notes = rate;
             _clientSvc.UpdateClient(client);
             return Content("{ \"status\":\"SUCCESS\" }", "application/json");
         }
