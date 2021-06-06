@@ -1,4 +1,5 @@
 ﻿using EquitationAPI.Services;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace EquitationAPI.Controllers
 {
+    [EnableCors("MyPolicy")]
     [Route("api/[controller]")]
     [ApiController]
     public class TasksController : ControllerBase
@@ -34,13 +36,16 @@ namespace EquitationAPI.Controllers
         }
 
         // POST api/<TasksController>
+        [DisableCors]
         [HttpPost]
-        public void Post([FromBody] Models.Task task)
+        public IActionResult Post([FromBody] Models.Task task)
         {
             _TaskService.AddTask(task);
+            return Content("{ \"status\":\"SUCCESS\" }", "application/json");
         }
 
         // PUT api/<TasksController>/5
+        [DisableCors]
         [HttpPut]
         public void Put([FromBody] Models.Task task)
         {
